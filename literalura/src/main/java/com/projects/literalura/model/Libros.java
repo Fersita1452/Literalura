@@ -11,16 +11,14 @@ public class Libros {
     private Long Id;
     @Column(unique = true)
     private String titulo;
-    @ElementCollection(targetClass =  DatosAutor.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "datos_autores", joinColumns = @JoinColumn(name = "autor_id"))
-    @Column(name = "autor", nullable = false)
-    private List<DatosAutor> autor;
     private  String idiomas;
     private  Double numeroDeDescargas;
+    @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Autores autores;
 
     public Libros(DatosLibros datosLibros){
         this.titulo = datosLibros.titulo();
-        this.autor = datosLibros.autor();
+        this.autores = new Autores(datosLibros.autor().get(0));
         this.idiomas = datosLibros.idiomas().get(0);
         this.numeroDeDescargas = datosLibros.numeroDeDescargas();
     }
@@ -29,10 +27,20 @@ public class Libros {
 
     @Override
     public String toString() {
-        return "Título: '" + titulo + '\'' +
-                ", Autor: " + autor +
-                ", Idiomas: " + idiomas +
-                ", Número de descargas: " + numeroDeDescargas;
+        return "------------------------------------------------------------" + '\n' +
+                "Título: " + titulo + '\n' +
+                "Autor: " + autores + '\n' +
+                "Idiomas: " + idiomas + '\n' +
+                "Número de descargas: " + numeroDeDescargas + '\n' +
+                "------------------------------------------------------------";
+    }
+
+    public Autores getAutores() {
+        return autores;
+    }
+
+    public void setAutores(Autores autores) {
+        this.autores = autores;
     }
 
     public Long getId() {
@@ -49,14 +57,6 @@ public class Libros {
 
     public void setTitulo(String titulo) {
         this.titulo = titulo;
-    }
-
-    public List<DatosAutor> getAutor() {
-        return autor;
-    }
-
-    public void setAutor(List<DatosAutor> autor) {
-        this.autor = autor;
     }
 
     public String getIdiomas() {
